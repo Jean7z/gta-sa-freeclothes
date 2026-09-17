@@ -7,8 +7,8 @@
 Your character's full clothing catalog — every shirt, jacket, pant, shoe, hat,
 chain, and watch — without playing through the story's shop progression.
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![Version: 1.2](https://img.shields.io/badge/version-1.2-green.svg)](https://github.com/Jean7z/gta-sa-freeclothes/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![Game: GTA SA 2.10 Android](https://img.shields.io/badge/game-GTA%20SA%202.10%20Android-blueviolet.svg)]()
 [![Platform: Android](https://img.shields.io/badge/platform-Android-lightgrey.svg)]()
 [![Loader: AML](https://img.shields.io/badge/loader-Android%20Mod%20Loader-orange.svg)](https://github.com/AndroidModLoader/AndroidModLoader)
@@ -18,32 +18,46 @@ Requires the official SA Android plugin SDK ([aml-psdk](https://github.com/Andro
 
 ---
 
+## Table of contents
+
+- [Features](#features)
+- [How it works](#how-it-works)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Building from source](#building-from-source)
+- [Project layout](#project-layout)
+- [Compatibility](#compatibility)
+- [Credits](#credits)
+- [License](#license)
+
+---
+
 ## Features
 
-### 🎁 Full Clothing Wardrobe
+### 🎁 Full clothing wardrobe
 Every clothing item is treated as already owned, so the wardrobe shows the **complete catalog** instead of only what you bought in-story.
 
-### 🏬 All Seven Stores
+### 🏬 All seven stores
 All seven clothing shops — Binco, ProLaps, Sub Urban, ZIP, Victim, Didier Sachs, and the Uniform store — appear in the safehouse wardrobe, **including the story-locked ones**.
 
-### 🏠 Any Safehouse
+### 🏠 Any safehouse
 Works in **any** safehouse on the map — owned or not, from the very start.
 
-### 🔍 Original Store Catalogs
+### 🔍 Original store catalogs
 Real stores keep their **own items**: entering Binco shows Binco's catalog, not a merged list. The merge only happens in the safehouse wardrobe.
 
-### 💸 Free Clothing
+### 💸 Free clothing
 As a bonus, the buy price in shops is forced to **0**.
 
-### ⚙️ Fully Configurable
+### ⚙️ Fully configurable
 Every feature toggles independently via the AML config file.
 
-### 🧹 Lightweight & Reversible
+### 🧹 Lightweight & reversible
 A single `.so` plugin. No game files are modified — **delete the plugin and everything is reverted**.
 
 ---
 
-## How It Works
+## How it works
 
 The mod hooks the game's `CShopping` class and lets the game's own scripts do the rest:
 
@@ -82,7 +96,7 @@ Edit `configs/net.psdk.samod.freeclothes.ini` under the `[Clothes]` section:
 
 ---
 
-## Building From Source
+## Building from source
 
 ### Prerequisites
 
@@ -103,12 +117,13 @@ $ANDROID_NDK_HOME/ndk-build NDK_PROJECT_PATH=. \
 
 The resulting libraries land in `libs/`:
 
-```
+```text
 libs/arm64-v8a/libAML_PSDK_FreeClothes64.so
 libs/armeabi-v7a/libAML_PSDK_FreeClothes.so
 ```
 
-> **Tip:** make sure `ANDROID_NDK_HOME` points at the NDK directory containing `ndk-build`, or call the full path to `ndk-build` directly.
+> [!TIP]
+> Make sure `ANDROID_NDK_HOME` points at the NDK directory containing `ndk-build`, or call the full path to `ndk-build` directly.
 
 ### Reusing an existing aml-psdk checkout
 
@@ -118,9 +133,9 @@ mv psdk psdk.bak && ln -s /path/to/aml-psdk psdk
 
 ---
 
-## Project Layout
+## Project layout
 
-```
+```text
 .
 ├── Android.mk          # ndk-build makefile (selects the module name per ABI)
 ├── Application.mk      # ABI targets and toolchain settings
