@@ -7,9 +7,14 @@
 #include <cstdint>
 #include <cstring>
 
-MYMODCFG(net.psdk.samod.freeclothes, SA Android Free Clothes, 1.2, Jean7z)
+MYMODCFG(net.psdk.samod.freeclothes, SA Android Free Clothes, 1.3, Jean7z)
 
 static ConfigEntry *cfgUnlockAll, *cfgFreePrice, *cfgAllShops;
+
+/* Base de libGTASA.so (relocada por ASLR) para re-resolver el script
+ * space en caliente: al cargar partida el juego puede reasignar el buffer
+ * de globals SCM, y la copia cacheada de ON_MOD_LOAD quedaría stale. */
+static uintptr_t g_pGame = 0;
 
 /* ---- Armario de casa: desbloquear las 6 tiendas extra ----
  * CWidgetListShop::AddItem es virtual — el caller no aparece en el
@@ -45,6 +50,20 @@ static void forgeShopGates()
         0x3DB0, 0x3DB4, 0xB0F8,
     };
     static const unsigned remcltVar = 0xB104;
+
+    /* Re-resuelve el script space en caliente: al cargar partida el juego
+     * puede reasignar el buffer de globals SCM (el valor cacheado de
+     * ON_MOD_LOAD quedaría stale y forjaríamos en memoria muerta). */
+    if(g_pGame)
+    {
+        uintptr_t fresh = *(uintptr_t*)(g_pGame + 0x84A0F0);
+        if(fresh && fresh != g_scriptSpace)
+        {
+            logger->Info("DBG script space moved: 0x%lX -> 0x%lX (re-resolved)",
+                         (unsigned long)g_scriptSpace, (unsigned long)fresh);
+            g_scriptSpace = fresh;
+        }
+    }
 
     if(!g_scriptSpace) return;
 
@@ -224,6 +243,11 @@ DECL_HOOKv(CShopping__LoadShop, const char* shopName)
  * Called at startup and when a savegame is loaded; it reads the
  * ms_bHasBought flags back from the save. We re-apply "everything owned"
  * right after so the wardrobe never reverts to the saved subset.
+ * Also re-forges the SCM wardrobe gates: the savegame carries the vanilla
+ * values of those globals (only SHOP1 on), so after loading, the wardrobe
+ * at any safehouse would show just Binco until some LoadShop("bought")
+ * re-fires. Forging right here covers that case before the player even
+ * opens the wardrobe.
  *
  * 2.10 arm64: _ZN9CShopping4LoadEv @ 0x580f28 (dynsym) */
 DECL_HOOKv(CShopping__Load)
@@ -235,6 +259,9 @@ DECL_HOOKv(CShopping__Load)
         memset(g_bHasBought, 1, kBoughtSize);
         logger->Info("CShopping::Load(): re-applied %d ownership flags", kBoughtSize);
     }
+
+    if(cfgAllShops && cfgAllShops->GetBool())
+        forgeShopGates();
 }
 
 /* CShopping::Init()
@@ -268,6 +295,7 @@ ON_MOD_LOAD()
         logger->Error("libGTASA.so not found!");
         return;
     }
+    g_pGame = pGame;
 
     /* Resolve function symbols via dlsym. */
     uintptr_t symHasBought = aml->GetSym(pGame, "_ZN9CShopping15HasPlayerBoughtEj");
@@ -325,10 +353,10 @@ ON_MOD_LOAD()
     if(g_bHasBought && cfgUnlockAll && cfgUnlockAll->GetBool())
     {
         memset(g_bHasBought, 1, kBoughtSize);
-        logger->Info("FreeClothes v1.2: all %d ownership flags unlocked", kBoughtSize);
+        logger->Info("FreeClothes v1.3: all %d ownership flags unlocked", kBoughtSize);
     }
 
-    logger->Info("FreeClothes v1.2: UnlockAll=%s FreePrice=%s AllShops=%s",
+    logger->Info("FreeClothes v1.3: UnlockAll=%s FreePrice=%s AllShops=%s",
                  cfgUnlockAll->GetBool() ? "ON" : "OFF",
                  cfgFreePrice->GetBool() ? "ON" : "OFF",
                  cfgAllShops->GetBool()  ? "ON" : "OFF");

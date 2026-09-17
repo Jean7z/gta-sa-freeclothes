@@ -7,7 +7,7 @@
 Your character's full clothing catalog — every shirt, jacket, pant, shoe, hat,
 chain, and watch — without playing through the story's shop progression.
 
-[![Version: 1.2](https://img.shields.io/badge/version-1.2-green.svg)](https://github.com/Jean7z/gta-sa-freeclothes/releases)
+[![Version: 1.3](https://img.shields.io/badge/version-1.3-green.svg)](https://github.com/Jean7z/gta-sa-freeclothes/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![Game: GTA SA 2.10 Android](https://img.shields.io/badge/game-GTA%20SA%202.10%20Android-blueviolet.svg)]()
 [![Platform: Android](https://img.shields.io/badge/platform-Android-lightgrey.svg)]()
@@ -61,7 +61,7 @@ The mod hooks the game's `CShopping` class and lets the game's own scripts do th
 - **Ownership** — `CShopping::HasPlayerBought` is forced to `true`, and the `ms_bHasBought` bitmap is re-marked as fully owned on init and save load, so the wardrobe's "bought" filter lets every item through.
 - **Price** — `CShopping::GetPrice` is forced to return `0` (relevant when `UnlockAll` is off, so the items you do see in real shops cost nothing).
 - **Wardrobe contents** — the `"bought"` shop path handled by `CShopping::LoadShop` is intercepted: the six clothing shop sections are merged into the wardrobe buffer **only for the safehouse wardrobe**.
-- **Shop rows** — the clothing script (`scriptv1.img`) adds a shop row only when its SCM gate flag is `1` (normally set by story purchases). The mod **temporarily enables those gates** the moment the safehouse wardrobe opens, so the script adds the SHOP2–SHOP7 rows itself with its native index dispatch.
+- **Shop rows** — the clothing script (`scriptv1.img`) adds a shop row only when its SCM gate flag is `1` (normally set by story purchases). The mod **enables those gates** so the script adds the SHOP2–SHOP7 rows itself with its native index dispatch: once the moment the safehouse wardrobe opens (via `LoadShop`), and again on startup/save load (via `CShopping::Load`) — a savegame stores the vanilla gate values, so after loading, walking into a safehouse wardrobe would otherwise show just Binco until a shop opened.
 
 > [!NOTE]
 > The game's original wardrobe UI is still used throughout. The mod adjusts gates and contents; the script renders and dispatches the wardrobe.
