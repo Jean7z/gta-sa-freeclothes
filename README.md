@@ -46,9 +46,6 @@ Works in **any** safehouse on the map — owned or not, from the very start.
 ### 🔍 Original store catalogs
 Real stores keep their **own items**: entering Binco shows Binco's catalog, not a merged list. The merge only happens in the safehouse wardrobe.
 
-### 💸 Free clothing
-As a bonus, the buy price in shops is forced to **0**.
-
 ### ⚙️ Fully configurable
 Every feature toggles independently via the AML config file.
 
@@ -62,7 +59,7 @@ A single `.so` plugin. No game files are modified — **delete the plugin and ev
 The mod hooks the game's `CShopping` class and lets the game's own scripts do the rest:
 
 - **Ownership** — `CShopping::HasPlayerBought` is forced to `true`, and the `ms_bHasBought` bitmap is re-marked as fully owned on init and save load, so the wardrobe's "bought" filter lets every item through.
-- **Price** — `CShopping::GetPrice` is forced to return `0`.
+- **Price** — `CShopping::GetPrice` is forced to return `0` (relevant when `UnlockAll` is off, so the items you do see in real shops cost nothing).
 - **Wardrobe contents** — the `"bought"` shop path handled by `CShopping::LoadShop` is intercepted: the six clothing shop sections are merged into the wardrobe buffer **only for the safehouse wardrobe**.
 - **Shop rows** — the clothing script (`scriptv1.img`) adds a shop row only when its SCM gate flag is `1` (normally set by story purchases). The mod **temporarily enables those gates** the moment the safehouse wardrobe opens, so the script adds the SHOP2–SHOP7 rows itself with its native index dispatch.
 
@@ -91,7 +88,7 @@ Edit `configs/net.psdk.samod.freeclothes.ini` under the `[Clothes]` section:
 | Key | Default | Description |
 |---|---|---|
 | `UnlockAll` | `true` | Show the complete wardrobe |
-| `FreePrice` | `true` | Set buy prices to 0 |
+| `FreePrice` | `true` | Force buy prices to 0 (only matters when `UnlockAll` is off — with everything owned there is nothing left to buy) |
 | `AllShops` | `true` | Unlock all seven stores in every safehouse |
 
 ---
