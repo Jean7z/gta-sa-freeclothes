@@ -73,7 +73,7 @@ The mod hooks the game's `CShopping` class and lets the game's own scripts do th
 | Step | What to do |
 |---|---|
 | **1. Requirements** | GTA SA 2.10 for Android + [AML](https://github.com/AndroidModLoader/AndroidModLoader) installed. |
-| **2. Download** | Grab your `.so` from the [Releases](https://github.com/Jean7z/gta-sa-freeclothes/releases) page: <br> `libAML_PSDK_FreeClothes64.so` → **arm64-v8a** (64-bit, most devices) <br> `libAML_PSDK_FreeClothes.so` → **armeabi-v7a** (32-bit) |
+| **2. Download** | Grab your `.so` from the [Releases](https://github.com/Jean7z/gta-sa-freeclothes/releases) page: `libAML_PSDK_FreeClothes64.so` → **arm64-v8a** (GTA:SA 2.10 ships arm64-only) |
 | **3. Place the `.so`** | Into the game's mods folder: <br> `/Android/data/com.rockstargames.gtasa/mods/` |
 | **4. Launch** | Start the game. The mod loads automatically. |
 
@@ -116,7 +116,6 @@ The resulting libraries land in `libs/`:
 
 ```text
 libs/arm64-v8a/libAML_PSDK_FreeClothes64.so
-libs/armeabi-v7a/libAML_PSDK_FreeClothes.so
 ```
 
 > [!TIP]
@@ -148,7 +147,7 @@ mv psdk psdk.bak && ln -s /path/to/aml-psdk psdk
 | | |
 |---|---|
 | **Game** | GTA: San Andreas **2.10** for Android (Play Store version) |
-| **Architectures** | **arm64-v8a** (full features), **armeabi-v7a** |
+| **Architectures** | **arm64-v8a** (GTA:SA 2.10 ships arm64-only) |
 | **Mod loader** | [Android Mod Loader (AML)](https://github.com/AndroidModLoader/AndroidModLoader) |
 | **Tested alongside** | `net.psdk.samod.unlimitedgym` and `net.psdk.samod.ahead` (no conflicts) |
 
