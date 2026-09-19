@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <cstring>
 
-MYMODCFG(net.psdk.samod.freeclothes, SA Android Free Clothes, 1.3, Jean7z)
+MYMODCFG(net.psdk.samod.freeclothes, SA Android Free Clothes, 1.4, Jean7z)
 
 static ConfigEntry *cfgUnlockAll, *cfgFreePrice, *cfgAllShops;
 
@@ -279,6 +279,35 @@ DECL_HOOKv(CShopping__Init)
         memset(g_bHasBought, 1, kBoughtSize);
         logger->Info("CShopping::Init(): re-applied %d ownership flags", kBoughtSize);
     }
+
+    /* NEW GAME path: starting a new game restarts the SCM script, which
+     * resets the wardrobe gates (SHOP2-7 -> 0, vanilla). CShopping::Load()
+     * is NOT called for a new game, so the gates would stay 0 and the
+     * safehouse wardrobe would show no rows until a save is loaded.
+     * Forge them right here, same as the Load() path does. */
+    if(cfgAllShops && cfgAllShops->GetBool())
+    {
+        logger->Info("CShopping::Init(): re-forging wardrobe gates (new-game path)");
+        forgeShopGates();
+    }
+}
+
+/* CPlayerInfo::Process(int) — verified per-frame tick (health-regen hook,
+ * _ZN11CPlayerInfo7ProcessEi @ 0x4ED8B0 arm64). The SCM script is not
+ * reliably ordered against our one-shot hooks: starting a NEW GAME resets
+ * the wardrobe gates to vanilla (3D80=1, 3D84..3DAC=0) AFTER CShopping::Init
+ * already ran, so Init-only forging is wiped. Re-check every frame and
+ * re-forge whenever SHOP2 (0x3D84) drops back to 0 — idempotent, ~2 reads. */
+DECL_HOOK(void, CPlayerInfo__Process, void* _this, int pad)
+{
+    CPlayerInfo__Process(_this, pad);
+
+    if(cfgAllShops && cfgAllShops->GetBool() && g_scriptSpace &&
+       *(int*)(g_scriptSpace + 0x3D84) != 1)
+    {
+        logger->Info("CShopping: shop gates reset to vanilla — re-forging");
+        forgeShopGates();
+    }
 }
 
 ON_MOD_LOAD()
@@ -303,6 +332,7 @@ ON_MOD_LOAD()
     uintptr_t symLoadShop  = aml->GetSym(pGame, "_ZN9CShopping8LoadShopEPKc");
     uintptr_t symLoad      = aml->GetSym(pGame, "_ZN9CShopping4LoadEv");
     uintptr_t symInit      = aml->GetSym(pGame, "_ZN9CShopping4InitEv");
+    uintptr_t symProcess   = aml->GetSym(pGame, "_ZN11CPlayerInfo7ProcessEi");
 
     if(!symHasBought || !symGetPrice || !symLoadShop)
     {
@@ -344,6 +374,8 @@ ON_MOD_LOAD()
         HOOK(CShopping__Load, symLoad);
     if(g_bHasBought && symInit)
         HOOK(CShopping__Init, symInit);
+    if(symProcess)
+        HOOK(CPlayerInfo__Process, symProcess);
 
     /* SCM globals (type 0x02): *(int*)(base + idx), idx = byte offset.
      * CollectParameters@0x3f1fcc: ldr x10,[GOT 0x84A0F0]; ldr w,[x10,x13]. */
@@ -353,10 +385,10 @@ ON_MOD_LOAD()
     if(g_bHasBought && cfgUnlockAll && cfgUnlockAll->GetBool())
     {
         memset(g_bHasBought, 1, kBoughtSize);
-        logger->Info("FreeClothes v1.3: all %d ownership flags unlocked", kBoughtSize);
+        logger->Info("FreeClothes v1.4: all %d ownership flags unlocked", kBoughtSize);
     }
 
-    logger->Info("FreeClothes v1.3: UnlockAll=%s FreePrice=%s AllShops=%s",
+    logger->Info("FreeClothes v1.4: UnlockAll=%s FreePrice=%s AllShops=%s",
                  cfgUnlockAll->GetBool() ? "ON" : "OFF",
                  cfgFreePrice->GetBool() ? "ON" : "OFF",
                  cfgAllShops->GetBool()  ? "ON" : "OFF");
