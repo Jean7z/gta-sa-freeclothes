@@ -4,8 +4,8 @@
 > Unlock the complete clothing wardrobe in **GTA: San Andreas Android 2.10**.
 > Access every clothing item and all seven stores directly from any safehouse.
 
-Your character's full clothing catalog — every shirt, jacket, pant, shoe, hat,
-chain, and watch — without playing through the story's shop progression.
+Your character's full clothing catalog (shirts, jackets, pants, shoes, hats,
+chains, and watches) without playing through the story's shop progression.
 
 [![Version: 1.4](https://img.shields.io/badge/version-1.4-green.svg)](https://github.com/Jean7z/gta-sa-freeclothes/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
@@ -34,23 +34,28 @@ Requires the official SA Android plugin SDK ([aml-psdk](https://github.com/Andro
 
 ## Features
 
-### 🎁 Full clothing wardrobe
-Every clothing item is treated as already owned, so the wardrobe shows the **complete catalog** instead of only what you bought in-story.
+### Full clothing wardrobe
+Every clothing item is treated as already owned, so the wardrobe shows the
+complete catalog instead of only what you bought in-story.
 
-### 🏬 All seven stores
-All seven clothing shops — Binco, ProLaps, Sub Urban, ZIP, Victim, Didier Sachs, and the Uniform store — appear in the safehouse wardrobe, **including the story-locked ones**.
+### All seven stores
+All seven clothing shops (Binco, ProLaps, Sub Urban, ZIP, Victim, Didier
+Sachs, and the Uniform store) appear in the safehouse wardrobe, including the
+story-locked ones.
 
-### 🏠 Any safehouse
-Works in **any** safehouse on the map — owned or not, from the very start.
+### Any safehouse
+Works in any safehouse on the map, owned or not, from the start.
 
-### 🔍 Original store catalogs
-Real stores keep their **own items**: entering Binco shows Binco's catalog, not a merged list. The merge only happens in the safehouse wardrobe.
+### Original store catalogs
+Real stores keep their own items: entering Binco shows Binco's catalog, not a
+merged list. The merge only happens in the safehouse wardrobe.
 
-### ⚙️ Fully configurable
+### Fully configurable
 Every feature toggles independently via the AML config file.
 
-### 🧹 Lightweight & reversible
-A single `.so` plugin. No game files are modified — **delete the plugin and everything is reverted**.
+### Lightweight and reversible
+A single `.so` plugin. No game files are modified; deleting the plugin reverts
+everything.
 
 ---
 
